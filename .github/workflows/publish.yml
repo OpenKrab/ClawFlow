@@ -4,13 +4,15 @@ on:
   push:
     tags:
       - 'v*'
-  release:
-    types: [published]
+  workflow_dispatch:
 
 permissions:
   contents: read
-  packages: write
   id-token: write
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   publish:
@@ -30,6 +32,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run tests
+        run: npm test
+
+      - name: Run linter
+        run: npm run lint
+
       - name: Publish to npm (using NPM_TOKEN)
         if: secrets.NPM_TOKEN != ''
         env:
@@ -41,6 +49,5 @@ jobs:
       - name: Publish to npm (OIDC / Trusted Publisher)
         if: secrets.NPM_TOKEN == ''
         run: |
-          echo "No NPM_TOKEN found. To publish without a stored token, set up a Trusted Publisher in npm and enable OIDC."
-          echo "See README or npm docs for steps to configure Trusted Publisher."
-          exit 1
+          echo "No NPM_TOKEN found. Trying Trusted Publisher via OIDC..."
+          npm publish --access public --provenance
