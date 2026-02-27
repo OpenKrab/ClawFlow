@@ -1,0 +1,47 @@
+{
+  "name": "clawflowbang",
+  "version": "1.0.1",
+  "description": "Skill + Cron Installer for OpenClaw - Install skills and configure them for immediate use",
+  "main": "src/index.js",
+  "bin": {
+    "clawflow": "bin/clawflowhub.js",
+    "clawflowhub": "bin/clawflowhub.js",
+    "cfh": "bin/clawflowhub.js"
+  },
+  "scripts": {
+    "start": "node bin/clawflowhub.js",
+    "test": "jest",
+    "lint": "eslint src/ bin/"
+  },
+  "keywords": [
+    "openclaw",
+    "skill",
+    "cron",
+    "installer",
+    "automation",
+    "clawhub",
+    "clawflow"
+  ],
+  "author": "ClawFlow Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.5.0",
+    "boxen": "^8.0.1",
+    "chalk": "^4.1.2",
+    "commander": "^11.0.0",
+    "fs-extra": "^11.1.1",
+    "gradient-string": "^3.0.0",
+    "inquirer": "^8.2.6",
+    "node-cron": "^3.0.3",
+    "ora": "^5.4.1",
+    "semver": "^7.5.4",
+    "yaml": "^2.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.47.0",
+    "jest": "^29.6.4"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

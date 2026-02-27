@@ -1,0 +1,53 @@
+{
+  "name": "@clawflow/example-kit",
+  "version": "1.0.0",
+  "description": "ตัวอย่าง ClawFlow Package สำหรับ npm registry",
+  "keywords": [
+    "clawflow",
+    "example",
+    "demo"
+  ],
+  "author": "ClawFlow Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clawflow/example-kit.git"
+  },
+  "clawflow": {
+    "skills": [
+      {
+        "name": "hello-world",
+        "version": "^1.0.0",
+        "source": "openclaw",
+        "description": "พูดว่า Hello World"
+      },
+      {
+        "name": "time-logger",
+        "version": "^1.0.0",
+        "source": "openclaw",
+        "description": "บันทึกเวลาปัจจุบัน"
+      }
+    ],
+    "crons": [
+      {
+        "skill": "time-logger",
+        "schedule": "0 * * * *",
+        "params": {
+          "format": "ISO"
+        },
+        "description": "บันทึกเวลาทุกชั่วโมง",
+        "enabled": true
+      }
+    ],
+    "config": {
+      "time-logger": {
+        "timezone": {
+          "default": "Asia/Bangkok",
+          "type": "string",
+          "description": "Timezone สำหรับการบันทึกเวลา"
+        }
+      }
+    },
+    "postInstall": "ตัวอย่าง Package ติดตั้งสำเร็จแล้ว! ลองตั้งค่า timezone ได้ใน config"
+  }
+}

@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Test files
+__tests__/
+*.test.js
+*.spec.js
+
+# Documentation
+docs/
+examples/
+CONTRIBUTING.md
+CHANGELOG.md
+LICENSE
+README.md
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+out/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Development files
+.eslintrc.json
+.gitignore
