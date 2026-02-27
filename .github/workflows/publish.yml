@@ -1,0 +1,46 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish to npm (using NPM_TOKEN)
+        if: secrets.NPM_TOKEN != ''
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "Publishing with NPM_TOKEN..."
+          npm publish --access public
+
+      - name: Publish to npm (OIDC / Trusted Publisher)
+        if: secrets.NPM_TOKEN == ''
+        run: |
+          echo "No NPM_TOKEN found. To publish without a stored token, set up a Trusted Publisher in npm and enable OIDC."
+          echo "See README or npm docs for steps to configure Trusted Publisher."
+          exit 1

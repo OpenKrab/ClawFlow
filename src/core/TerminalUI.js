@@ -58,6 +58,7 @@ const boxStyles = {
   },
 };
 
+/* eslint-disable no-useless-escape */
 // ASCII Art for logo - Cool Retro Style
 const asciiLogo = `
  ________  ___       ________  ___       __   ________ ___       ________  ___       __      
@@ -72,6 +73,7 @@ const asciiLogo = `
                                                                                              
                       ClawFlow - Skill + Cron Installer for OpenClaw
 `;
+/* eslint-enable no-useless-escape */
 
 // Mini logo for sub-headers
 const miniLogo = `
@@ -178,7 +180,7 @@ function createProgressBar(total, current, width = 30) {
 /**
  * Print main banner
  */
-function printBanner(pkgVersion = '1.0.0') {
+function printBanner(_pkgVersion = '1.0.0') {
   const banner = gradientText(asciiLogo, colors.primary, colors.secondary);
   
   console.log(chalk.bgBlack(banner));

@@ -59,7 +59,7 @@ class CronManager {
 
     if (this.useOpenClawCron) {
       const uniqueName = `cfh:${skillName}:${Date.now()}`;
-      const message = `Run skill "${skillName}" with params: ${JSON.stringify(params)}`;
+      const message = `Run skill ${skillName} with params: ${JSON.stringify(params)}`;
       const created = await this.openclawCLI.addCronJob({
         name: uniqueName,
         description: description || `Run ${skillName}`,
@@ -152,7 +152,7 @@ class CronManager {
       const tracked = this.configManager.getCrons().find((c) => c.id === jobId);
       const message =
         Object.prototype.hasOwnProperty.call(updates, 'params') && tracked?.skill
-          ? `Run skill "${tracked.skill}" with params: ${JSON.stringify(updates.params || {})}`
+          ? `Run skill ${tracked.skill} with params: ${JSON.stringify(updates.params || {})}`
           : undefined;
 
       if (Object.prototype.hasOwnProperty.call(updates, 'params') && !tracked?.skill) {
@@ -392,7 +392,7 @@ async function run() {
     console.log(\`[\${new Date().toISOString()}] Running \${skill}...\`);
     
     // Call OpenClaw API
-    const baseUrl = process.env.OPENCLAW_URL || 'http://localhost:3000';
+    const baseUrl = process.env.OPENCLAW_URL || 'http://localhost:18789';
     const response = await axios.post(\`\${baseUrl}/api/skills/execute\`, {
       name: skill,
       params: { ...config, ...params },

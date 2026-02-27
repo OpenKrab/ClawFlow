@@ -38,3 +38,6 @@ coverage/
 # Development files
 .eslintrc.json
 .gitignore
+.env
+.env.local
+.env.*.local

@@ -3,7 +3,7 @@
 `ClawFlow` is a CLI wrapper for OpenClaw that installs skill bundles and wires cron jobs in one flow.
 
 Published package: `clawflowbang`  
-Primary command: `clawflow` (aliases: `clawflowhub`, `cfh`)
+Primary command: `clawflow` (alias: `cfh`)
 
 ## What It Does
 
@@ -61,7 +61,7 @@ clawflow remove <package>
 
 clawflow cron-list
 clawflow cron-add <skill> --schedule "*/5 * * * *"
-clawflow cron-edit <id> --every 15m
+clawflow cron-edit <id> --every 15m --description "updated job"
 clawflow cron-remove <id>
 ```
 
@@ -78,6 +78,8 @@ Examples:
 ```bash
 clawflow cron-add crypto-price --every 15m
 clawflow cron-edit <job-id> --schedule "@daily"
+clawflow cron-edit <job-id> --params '{"symbols":["BTC","ETH"]}'
+clawflow cron-remove <job-id>
 ```
 
 ## Skill Install Fallback (ClawHub -> Git)

@@ -5,6 +5,7 @@
 const chalk = require('chalk');
 const ClawFlow = require('../index');
 const { normalizeCronExpression } = require('../core/CronFormat');
+const YAML = require('yaml');
 
 function parseJsonParams(params) {
   if (params === undefined || params === null || params === '') {
@@ -15,7 +16,41 @@ function parseJsonParams(params) {
     return params;
   }
 
-  return JSON.parse(params);
+  const raw = String(params).trim();
+  const unquoted =
+    (raw.startsWith("'") && raw.endsWith("'")) || (raw.startsWith('"') && raw.endsWith('"'))
+      ? raw.slice(1, -1).trim()
+      : raw;
+
+  const candidates = [raw, unquoted];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    try {
+      const parsed = JSON.parse(candidate);
+      if (parsed && typeof parsed === 'object') {
+        return parsed;
+      }
+    } catch (_error) {
+      // Continue to YAML fallback
+    }
+  }
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    try {
+      const parsed = YAML.parse(candidate);
+      if (parsed && typeof parsed === 'object') {
+        return parsed;
+      }
+    } catch (_error) {
+      // Continue
+    }
+  }
+
+  throw new Error(
+    'รูปแบบ --params ไม่ถูกต้อง (ใช้ JSON object เช่น {"message":"hello"} หรือ YAML object เช่น message: hello)',
+  );
 }
 
 function resolveScheduleInput(options) {

@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2026-02-27
+
+### Changed
+- Set `clawflow` as the primary npm binary and kept `cfh` as the short alias.
+- Expanded README cron examples for `cron-edit` and `cron-remove` with practical command samples.
+
+### Fixed
+- Improved Windows OpenClaw command execution so `cron-add` arguments are passed correctly.
+
 ## [1.0.0] - 2026-02-27
 
 ### Added

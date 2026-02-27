@@ -73,7 +73,7 @@ class ConfigManager {
     return {
       version: '1.0.0',
       openclaw: {
-        baseUrl: 'http://localhost:3000',
+        baseUrl: 'http://localhost:18789',
         apiKey: null,
         cliBin: 'openclaw',
         clawhubBin: 'clawhub',

@@ -1,11 +1,10 @@
 {
   "name": "clawflowbang",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Skill + Cron Installer for OpenClaw - Install skills and configure them for immediate use",
   "main": "src/index.js",
   "bin": {
     "clawflow": "bin/clawflowhub.js",
-    "clawflowhub": "bin/clawflowhub.js",
     "cfh": "bin/clawflowhub.js"
   },
   "scripts": {
@@ -29,6 +28,7 @@
     "boxen": "^8.0.1",
     "chalk": "^4.1.2",
     "commander": "^11.0.0",
+    "dotenv": "^16.6.1",
     "fs-extra": "^11.1.1",
     "gradient-string": "^3.0.0",
     "inquirer": "^8.2.6",

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+require('dotenv').config();
+
 const { program } = require('commander');
 const pkg = require('../package.json');
 
@@ -35,7 +37,7 @@ program
   .option('--openclaw-bin <path>', 'Path to openclaw CLI binary')
   .option('--clawhub-bin <path>', 'Path to clawhub CLI binary')
   .option('--no-cron', 'Install skills without creating cronjobs')
-  .option('--dry-run', 'Show what would be done without installing');
+  .option('--dry-run', 'Show what would be done without installing')
   .action(installCommand);
 
 // List command

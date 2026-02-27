@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 const { promisify } = require('util');
-const { execFile, spawnSync } = require('child_process');
+const { execFile, spawn, spawnSync } = require('child_process');
 
 const execFileAsync = promisify(execFile);
 
@@ -33,22 +33,67 @@ class OpenClawCLI {
   }
 
   commandExists(command, args = ['--help']) {
-    const result = spawnSync(command, args, {
-      encoding: 'utf8',
-      stdio: 'pipe',
-      windowsHide: true,
-    });
+    try {
+      const result = spawnSync(command, args, {
+        encoding: 'utf8',
+        stdio: 'pipe',
+        windowsHide: true,
+        shell: true,
+      });
 
-    return result.status === 0;
+      return result.status === 0;
+    } catch (e) {
+      return false;
+    }
   }
 
   async run(command, args, options = {}) {
+    if (process.platform === 'win32') {
+      return new Promise((resolve, reject) => {
+        const comspec = process.env.ComSpec || 'cmd.exe';
+
+        const child = spawn(comspec, ['/d', '/s', '/c', command, ...args], {
+          cwd: options.cwd,
+          env: process.env,
+          windowsHide: true,
+          shell: false,
+        });
+
+        let stdout = '';
+        let stderr = '';
+
+        child.stdout.on('data', (chunk) => {
+          stdout += String(chunk);
+        });
+
+        child.stderr.on('data', (chunk) => {
+          stderr += String(chunk);
+        });
+
+        child.on('error', (error) => {
+          reject(new Error(`${command} ${args.join(' ')} ล้มเหลว: ${error.message}`));
+        });
+
+        child.on('close', (code) => {
+          const out = stdout.trim();
+          const err = stderr.trim();
+          if (code === 0) {
+            resolve({ stdout: out, stderr: err });
+            return;
+          }
+          const detail = err || out || `exit code ${code}`;
+          reject(new Error(`${command} ${args.join(' ')} ล้มเหลว: ${detail}`));
+        });
+      });
+    }
+
     try {
       const { stdout, stderr } = await execFileAsync(command, args, {
         cwd: options.cwd,
         env: process.env,
         maxBuffer: 1024 * 1024 * 4,
         windowsHide: true,
+        shell: true,
       });
       return {
         stdout: (stdout || '').trim(),
