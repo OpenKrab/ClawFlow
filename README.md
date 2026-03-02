@@ -1,45 +1,52 @@
-# ClawFlow
+# 🦞 ClawFlow
 
-`ClawFlow` is a CLI wrapper for OpenClaw that installs skill bundles and wires cron jobs in one flow.
+**ClawFlow** is a skill + cron installer for OpenClaw/OpenKrab ecosystem.  
+It installs skill bundles and wires cron jobs in one flow, providing both CLI automation and package management.
 
-Published package: `clawflowbang`  
-Primary command: `clawflow` (alias: `cfh`)
+<p align="center">
+  <img src="/public/banner.png" alt="ClawFlow Banner" width="700">
+</p>
 
-## What It Does
+## Features
 
-- Install package presets (skills + cron jobs) with one command.
-- Install skills from ClawHub first, then fallback to Git clone if not found.
-- Manage cron jobs through `openclaw cron` (add/edit/remove/list).
-- Validate and normalize cron expressions before save.
+- **Package Management**: Install skill bundles with one command from ClawHub or Git
+- **Cron Automation**: Schedule and manage automated skill execution
+- **Fallback Installation**: ClawHub registry first, Git clone fallback
+- **Cron Validation**: Normalize and validate cron expressions
+- **CLI Interface**: Fast command-line tool (`clawflow` / `cfh`)
+- **NPM Integration**: Published as `clawflowbang` package
+- **Cross Platform**: Node.js based with Windows/Linux/macOS support
 
-## Requirements
+---
 
-- Node.js `>=16`
+## Quick Start
+
+### Prerequisites
+
+- Node.js 16+
 - OpenClaw CLI (`openclaw`)
-- ClawHub CLI (`clawhub`) for registry skill install
-- Git (used for fallback clone)
+- ClawHub CLI (`clawhub`) for registry access
+- Git (for fallback installation)
 
-## Install
+### Installation
 
 ```bash
 npm i -g clawflowbang
 ```
 
-Check:
+Verify installation:
 
 ```bash
 clawflow --version
 ```
 
-## Quick Start
-
-Initialize local config:
+### Initial Setup
 
 ```bash
 clawflow init
 ```
 
-Install a package preset:
+### Install Your First Package
 
 ```bash
 clawflow install trading-kit
@@ -51,29 +58,39 @@ Check status:
 clawflow status
 ```
 
-## Main Commands
+---
+
+## Core Commands
+
+### Package Management
 
 ```bash
-clawflow install <package>
-clawflow list [--available] [--npm]
-clawflow search <query> [--no-npm]
-clawflow remove <package>
-
-clawflow cron-list
-clawflow cron-add <skill> --schedule "*/5 * * * *"
-clawflow cron-edit <id> --every 15m --description "updated job"
-clawflow cron-remove <id>
+clawflow install <package>              # Install skill bundle
+clawflow list [--available] [--npm]     # List installed/available packages
+clawflow search <query> [--no-npm]     # Search packages
+clawflow remove <package>               # Remove installed package
 ```
+
+### Cron Operations
+
+```bash
+clawflow cron-list                      # List all cron jobs
+clawflow cron-add <skill> --schedule "*/5 * * * *"  # Add new cron job
+clawflow cron-edit <id> --every 15m --description "updated job"  # Modify existing
+clawflow cron-remove <id>               # Remove cron job
+```
+
+---
 
 ## Cron Input Formats
 
 Supported formats:
 
-- Raw cron: `*/5 * * * *`
-- Preset: `@hourly`, `@daily`, `@weekly`, `@monthly`
-- Shorthand: `5m`, `every 15m`, `1h`, `2d`
+- **Raw cron**: `*/5 * * * *`
+- **Preset**: `@hourly`, `@daily`, `@weekly`, `@monthly`
+- **Shorthand**: `5m`, `every 15m`, `1h`, `2d`
 
-Examples:
+### Examples
 
 ```bash
 clawflow cron-add crypto-price --every 15m
@@ -82,25 +99,35 @@ clawflow cron-edit <job-id> --params '{"symbols":["BTC","ETH"]}'
 clawflow cron-remove <job-id>
 ```
 
-## Skill Install Fallback (ClawHub -> Git)
+---
 
-When installing package skills:
+## Installation Flow
 
-1. Try `clawhub install`
-2. If failed, try `git clone` when skill metadata provides repository info
-3. Validate cloned skill by checking `SKILL.md`
+### Skill Installation Strategy
 
-Skill metadata fields for git fallback:
+1. **Primary**: Try `clawhub install` from registry
+2. **Fallback**: Use `git clone` when registry fails
+3. **Validation**: Check `SKILL.md` exists and is valid
 
-- `repository` or `repo` or `git`
-- optional `branch` / `tag` / `ref`
+### Git Fallback Metadata
 
-## Paths Used by Default
+Required fields in package metadata:
 
-- Skills path: `~/.openclaw/workspace/skills`
+- `repository` or `repo` or `git` - Git repository URL
+- Optional: `branch` / `tag` / `ref` - Specific version
+
+---
+
+## Configuration
+
+### Default Paths
+
+- Skills directory: `~/.openclaw/workspace/skills`
 - Cron jobs file: `~/.openclaw/cron/jobs.json`
 
-Override during install:
+### Custom Paths
+
+Override defaults during installation:
 
 ```bash
 clawflow install <package> \
@@ -108,10 +135,11 @@ clawflow install <package> \
   --cron-jobs "<path-to-jobs.json>"
 ```
 
-## NPM Package Preset Format
+---
 
-`clawflow` can read package metadata from npm packages.  
-Use `clawflow` field in package.json:
+## NPM Package Format
+
+`clawflow` reads package metadata from npm packages using the `clawflow` field:
 
 ```json
 {
@@ -138,14 +166,99 @@ Use `clawflow` field in package.json:
 }
 ```
 
+---
+
+## Tech Stack
+
+- **Node.js 16+** - Core runtime
+- **Commander.js** - CLI framework
+- **Node-cron** - Cron job management
+- **Axios** - HTTP requests for registry
+- **Chalk + Gradient-string** - Terminal styling
+- **Inquirer.js** - Interactive prompts
+- **YAML** - Configuration parsing
+- **Boxen** - Beautiful terminal boxes
+
+---
+
+## Project Structure
+
+```
+ClawFlowHub/
+├── bin/
+│   └── clawflowhub.js          # CLI entry point
+├── src/
+│   ├── index.js                # Main module
+│   ├── commands/               # Command implementations
+│   ├── utils/                 # Utility functions
+│   └── config/                # Configuration management
+├── skills/                    # Example skills
+├── examples/                  # Usage examples
+├── docs/                      # Documentation
+├── tests/                     # Test suite
+├── package.json               # NPM package config
+├── image.png                 # Project banner
+└── README.md                 # This file
+```
+
+---
+
 ## Development
 
+### Setup
+
 ```bash
+git clone https://github.com/OpenKrab/ClawFlowHub.git
+cd ClawFlowHub
 npm install
-npm run lint
-npm test -- --runInBand
 ```
+
+### Development Commands
+
+```bash
+npm run lint                   # Lint code
+npm test                      # Run test suite
+npm start                     # Run CLI locally
+```
+
+### Testing
+
+```bash
+# Test basic functionality
+clawflow --help
+clawflow list --available
+clawflow search crypto
+```
+
+---
+
+## OpenClaw Integration
+
+ClawFlow integrates with OpenClaw ecosystem through:
+
+- **Skill Installation**: Direct integration with OpenClaw skill system
+- **Cron Management**: Uses OpenClaw's cron job infrastructure
+- **Registry Access**: Leverages ClawHub for skill discovery
+- **Configuration**: Respects OpenClaw's configuration patterns
+
+---
+
+## Contributing
+
+PRs are welcome! Please ensure:
+
+1. Code follows existing ESLint patterns
+2. Add tests for new functionality
+3. Update documentation as needed
+4. Test cross-platform compatibility
+5. Follow semantic versioning
+
+---
 
 ## License
 
 MIT
+
+---
+
+*Built for the Lobster Way 🦞*
