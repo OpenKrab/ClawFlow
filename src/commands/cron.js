@@ -2,23 +2,24 @@
  * Cron commands - จัดการ cronjobs
  */
 
-const chalk = require('chalk');
-const ClawFlow = require('../index');
-const { normalizeCronExpression } = require('../core/CronFormat');
-const YAML = require('yaml');
+const chalk = require("chalk");
+const ClawFlow = require("../index");
+const { normalizeCronExpression } = require("../core/CronFormat");
+const YAML = require("yaml");
 
 function parseJsonParams(params) {
-  if (params === undefined || params === null || params === '') {
+  if (params === undefined || params === null || params === "") {
     return {};
   }
 
-  if (typeof params === 'object') {
+  if (typeof params === "object") {
     return params;
   }
 
   const raw = String(params).trim();
   const unquoted =
-    (raw.startsWith("'") && raw.endsWith("'")) || (raw.startsWith('"') && raw.endsWith('"'))
+    (raw.startsWith("'") && raw.endsWith("'")) ||
+    (raw.startsWith('"') && raw.endsWith('"'))
       ? raw.slice(1, -1).trim()
       : raw;
 
@@ -28,7 +29,7 @@ function parseJsonParams(params) {
     if (!candidate) continue;
     try {
       const parsed = JSON.parse(candidate);
-      if (parsed && typeof parsed === 'object') {
+      if (parsed && typeof parsed === "object") {
         return parsed;
       }
     } catch (_error) {
@@ -40,7 +41,7 @@ function parseJsonParams(params) {
     if (!candidate) continue;
     try {
       const parsed = YAML.parse(candidate);
-      if (parsed && typeof parsed === 'object') {
+      if (parsed && typeof parsed === "object") {
         return parsed;
       }
     } catch (_error) {
@@ -58,7 +59,7 @@ function resolveScheduleInput(options) {
     return normalizeCronExpression(`every ${options.every}`);
   }
 
-  return normalizeCronExpression(options.schedule || '*/5 * * * *');
+  return normalizeCronExpression(options.schedule || "*/5 * * * *");
 }
 
 module.exports = {
@@ -66,18 +67,21 @@ module.exports = {
     const hub = new ClawFlow();
 
     try {
-      console.log(chalk.cyan.bold('\n⏰ Configured Cronjobs:\n'));
+      console.log(chalk.cyan.bold("\n⏰ Configured Cronjobs:\n"));
 
       const crons = await hub.listCrons();
 
       if (crons.length === 0) {
-        console.log(chalk.gray('  No cronjobs configured'));
+        console.log(chalk.gray("  No cronjobs configured"));
       } else {
         crons.forEach((job) => {
-          const status = job.enabled !== false ? chalk.green('●') : chalk.gray('○');
+          const status =
+            job.enabled !== false ? chalk.green("●") : chalk.gray("○");
           console.log(`  ${status} ${chalk.bold(job.skill || job.name)}`);
-          console.log(`    ${chalk.blue('Schedule:')} ${job.schedule}`);
-          console.log(`    ${chalk.blue('Description:')} ${job.description || '-'}`);
+          console.log(`    ${chalk.blue("Schedule:")} ${job.schedule}`);
+          console.log(
+            `    ${chalk.blue("Description:")} ${job.description || "-"}`,
+          );
           console.log();
         });
       }
@@ -88,7 +92,7 @@ module.exports = {
   },
 
   async add(skillName, options) {
-    const { params = '{}', description = '' } = options;
+    const { params = "{}", description = "" } = options;
 
     const hub = new ClawFlow();
 
@@ -96,9 +100,26 @@ module.exports = {
       const parsedParams = parseJsonParams(params);
       const schedule = resolveScheduleInput(options);
 
-      console.log(chalk.cyan(`\n➕ Adding cronjob for ${chalk.bold(skillName)}...\n`));
+      if (options.dryRun) {
+        console.log(chalk.yellow("\n📋 Cronjob Preview (Dry Run):\n"));
+        console.log(`  Skill: ${chalk.bold(skillName)}`);
+        console.log(`  Schedule: ${schedule}`);
+        console.log(`  Description: ${description || "-"}`);
+        console.log(`  Params: ${JSON.stringify(parsedParams)}`);
+        console.log(chalk.gray("\n(Nothing was added)"));
+        return;
+      }
 
-      const job = await hub.cronManager.add(skillName, schedule, parsedParams, description);
+      console.log(
+        chalk.cyan(`\n➕ Adding cronjob for ${chalk.bold(skillName)}...\n`),
+      );
+
+      const job = await hub.cronManager.add(
+        skillName,
+        schedule,
+        parsedParams,
+        description,
+      );
 
       console.log(chalk.green(`\n✓ Cronjob added successfully`));
       console.log(`  ID: ${job.id}`);
@@ -113,7 +134,9 @@ module.exports = {
     const hub = new ClawFlow();
 
     try {
-      console.log(chalk.cyan(`\n🗑️  Removing cronjob ${chalk.bold(jobId)}...\n`));
+      console.log(
+        chalk.cyan(`\n🗑️  Removing cronjob ${chalk.bold(jobId)}...\n`),
+      );
 
       await hub.cronManager.remove(jobId);
 
@@ -132,7 +155,7 @@ module.exports = {
       if (options.schedule || options.every) {
         updates.schedule = resolveScheduleInput(options);
       }
-      if (typeof options.description === 'string') {
+      if (typeof options.description === "string") {
         updates.description = options.description;
       }
       if (options.params !== undefined) {
@@ -140,7 +163,9 @@ module.exports = {
       }
 
       if (Object.keys(updates).length === 0) {
-        throw new Error('No update data provided (use --schedule/--every/--description/--params)');
+        throw new Error(
+          "No update data provided (use --schedule/--every/--description/--params)",
+        );
       }
 
       const updated = await hub.cronManager.edit(jobId, updates);
